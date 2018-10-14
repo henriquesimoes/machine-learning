@@ -1,0 +1,7 @@
+{
+  "name": "machine-learning",
+  "projects": [
+    "movie-recommendation",
+    "linear-regression"
+  ]
+}
