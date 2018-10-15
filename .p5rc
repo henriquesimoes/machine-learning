@@ -2,6 +2,7 @@
   "name": "machine-learning",
   "projects": [
     "movie-recommendation",
-    "linear-regression"
+    "linear-regression",
+    "linear-regression-gradient-descent"
   ]
 }
