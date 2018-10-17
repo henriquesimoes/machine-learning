@@ -1,11 +1,11 @@
 'use strict';
 
 class Perceptron {
-  constructor () {
+  constructor (num) {
     this.weights = [];
     this.learningRate = 0.01;
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < num; i++) {
       this.weights.push(random(-1, 1));
     }
   }
@@ -18,9 +18,16 @@ class Perceptron {
     }
     this.weights.forEach((weight, i) => {
       sum += weight * inputs[i];
-      
     });
+    
     return this.sign(sum);
+  }
+
+  guessY (x) {
+    const wx = this.weights[0];
+    const wy = this.weights[1];
+    const wb = this.weights[2];
+    return - (wb / wy) - (wx / wy) * x;
   }
 
   sign (value) {
