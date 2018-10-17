@@ -3,6 +3,7 @@
   "projects": [
     "movie-recommendation",
     "linear-regression",
-    "linear-regression-gradient-descent"
+    "linear-regression-gradient-descent",
+    "perceptron"
   ]
 }
