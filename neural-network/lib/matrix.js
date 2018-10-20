@@ -2,7 +2,9 @@
 
 /**
  * @callback handleFunction
- * @param {number} value 
+ * @param {Number} value
+ * @param {Number} [i] Row index
+ * @param {Number} [j] Column index
  */
 
 /**
@@ -41,17 +43,11 @@ class Matrix {
       }
     }
 
-    this.values.forEach((row, i) => {
-      row.forEach((v, j, row) => {
-        if (typeof n === 'number') {
-          row[j] += n;
-        } else {
-          row[j] += n.values[i][j];
-        }
-      });
-    });
+    if (typeof n === 'number') {
+      return this.map(v => v += n);
+    }
 
-    return this;
+    return this.map((v, i, j) => v += n.values[i][j]);
   }
 
   /**
@@ -64,14 +60,7 @@ class Matrix {
       throw new TypeError(
         `n should be a number, but got a ${typeof n}...`);
     }
-    this.values.forEach((row, i) => {
-      row.forEach((v, j, row) => {
-        if (typeof n === 'number') {
-          row[j] *= n;
-        }
-      });
-    });
-    return this;
+    return this.map(v => v * n);
   }
 
   /**
@@ -79,12 +68,7 @@ class Matrix {
    * @return {Matrix} Updated matrix
    */
   randomize () {
-    this.values.forEach((row) => {
-      row.forEach((v, i, row) => {
-        row[i] = Math.floor(Math.random() * 10);
-      });
-    });
-    return this;
+    return this.map(v => Math.floor(Math.random() * 10));
   }
 
   /**
@@ -120,7 +104,7 @@ class Matrix {
   map (fn) {
     this.values.forEach((row, i, matrix) => {
       row.forEach((value, j) => {
-        matrix[i][j] = fn(value);
+        matrix[i][j] = fn(value, i, j);
       });
     });
     return this;
