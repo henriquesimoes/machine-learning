@@ -4,6 +4,7 @@
     "movie-recommendation",
     "linear-regression",
     "linear-regression-gradient-descent",
-    "perceptron"
+    "perceptron",
+    "neural-network"
   ]
 }
