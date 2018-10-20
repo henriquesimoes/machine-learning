@@ -1,6 +1,11 @@
 'use strict';
 
 /**
+ * @callback handleFunction
+ * @param {number} value 
+ */
+
+/**
  * Simple Matrix class for manipulating matrix
  */
 class Matrix {
@@ -50,47 +55,23 @@ class Matrix {
   }
 
   /**
-   * Multiplies a scalar or matrix value to this matrix
-   * @param {Number|Matrix} n Number or matrix to be multiplied together
-   * @return {Matrix} Result matrix
+   * Multiplies a scalar value to this matrix
+   * @param {Number} n Number to be multiplied by the whole matrix
+   * @return {Matrix} This matrix object
    */
   mult (n) {
-    if (!(typeof n === 'number' || n instanceof Matrix)) {
+    if (!(typeof n === 'number')) {
       throw new TypeError(
-        `n should be either a number or a Matrix object, but got a ${typeof n}...`);
+        `n should be a number, but got a ${typeof n}...`);
     }
-
-    if (n instanceof Matrix) {
-      if (this.nCols !== n.nRows) {
-        throw new TypeError(`n should have the number of rows ` +
-          `equals to the number of cols in the current matrix...`);
-      }
-
-      let result = new Matrix(this.nRows, n.nCols);
-      const a = this.values;
-      const b = n.values;
-
-      result.values.forEach((row, i) => {
-        row.forEach((value, j) => {
-          let sum = 0;
-          for (let k = 0; k < this.nCols; k++) {
-            sum += a[i][k] * b[k][j];
-          }
-          result.values[i][j] = sum;
-        });
+    this.values.forEach((row, i) => {
+      row.forEach((v, j, row) => {
+        if (typeof n === 'number') {
+          row[j] *= n;
+        }
       });
-
-      return result;
-    } else {
-      this.values.forEach((row, i) => {
-        row.forEach((v, j, row) => {
-          if (typeof n === 'number') {
-            row[j] *= n;
-          }
-        });
-      });
-      return this;
-    }
+    });
+    return this;
   }
 
   /**
@@ -108,7 +89,7 @@ class Matrix {
 
   /**
    * Transposes the current matrix
-   * @return {Matrix} Transposed matrix
+   * @return {Matrix} This matrix
    */
   transpose () {
     const result = new Matrix(this.nCols, this.nRows);
@@ -119,7 +100,30 @@ class Matrix {
       });
     });
 
-    return result;
+    this.values = result.values;
+
+    return this;
+  }
+
+  /**
+   * Console-table the matrix values
+   */
+  print () {
+    console.table(this.values);
+  }
+
+  /**
+   * Applies the given function for every matrix value
+   * @param {handleFunction} fn
+   * @return {Matrix} This matrix
+   */
+  map (fn) {
+    this.values.forEach((row, i, matrix) => {
+      row.forEach((value, j) => {
+        matrix[i][j] = fn(value);
+      });
+    });
+    return this;
   }
 
   /**
@@ -136,5 +140,53 @@ class Matrix {
       });
     }
     return flag;
+  }
+
+  /**
+   * Multiplies matrix a by b
+   * @param {Matrix} a
+   * @param {Matrix} b
+   * @return {Matrix} Result matrix
+   */
+  static mult (a, b) {
+    if (!(a instanceof Matrix && b instanceof Matrix)) {
+      throw new TypeError(
+        `a and b should both be Matrix objects, but got a ${typeof a} and a ${typeof b}...`);
+    }
+    if (a.nCols !== b.nRows) {
+      throw new TypeError(`n should have the number of rows ` +
+        `equals to the number of cols in the current matrix...`);
+    }
+
+    let result = new Matrix(a.nRows, b.nCols);
+
+    result.values.forEach((row, i) => {
+      row.forEach((value, j) => {
+        let sum = 0;
+        for (let k = 0; k < a.nCols; k++) {
+          sum += b.values[i][k] * b.values[k][j];
+        }
+        result.values[i][j] = sum;
+      });
+    });
+
+    return result;
+  }
+
+  /**
+   * Transposes the current matrix
+   * @param {Matrix} matrix
+   * @return {Matrix} Transposed matrix
+   */
+  static transpose (matrix) {
+    const result = new Matrix(matrix.nCols, matrix.nRows);
+
+    matrix.values.forEach((row, i) => {
+      row.forEach((value, j) => {
+        result.values[j][i] = value;
+      });
+    });
+
+    return result;
   }
 }
