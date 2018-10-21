@@ -64,11 +64,11 @@ class Matrix {
   }
 
   /**
-   * Attributes random values between 0-10 for every matrix value
-   * @return {Matrix} Updated matrix
+   * Attributes random values between -1 and 1 for every matrix value
+   * @return {Matrix} This matrix
    */
   randomize () {
-    return this.map(v => Math.floor(Math.random() * 10));
+    return this.map(() => Math.random() * 2 - 1);
   }
 
   /**
@@ -87,6 +87,18 @@ class Matrix {
     this.values = result.values;
 
     return this;
+  }
+
+  /**
+   * Converts this single-column matrix into a array
+   * @return {Array<Number>}
+   */
+  toArray() {
+    let result = [];
+    this.values.forEach((row) => {
+      result.push(row[0]);
+    });
+    return result;
   }
 
   /**
@@ -148,7 +160,7 @@ class Matrix {
       row.forEach((value, j) => {
         let sum = 0;
         for (let k = 0; k < a.nCols; k++) {
-          sum += b.values[i][k] * b.values[k][j];
+          sum += a.values[i][k] * b.values[k][j];
         }
         result.values[i][j] = sum;
       });
@@ -172,5 +184,15 @@ class Matrix {
     });
 
     return result;
+  }
+
+  /**
+   * Creates a new matrix with one column with the given array
+   * @param {Array} arr Array to fill out the matrix
+   * @return {Matrix} Created matrix
+   */
+  static fromArray (arr) {
+    const result = new Matrix(arr.length, 1);
+    return result.map((v, i) => arr[i]);
   }
 }
