@@ -44,4 +44,17 @@ class NeuralNetwork {
 
     return output.toArray();
   }
+
+  /**
+   * Trains the neural network with the given data
+   * @param {Array<Number>|Matrix} inputs Training data
+   * @param {Array<Number|Matrix>} targets Expected output value
+   */
+  train (inputs, targets) {
+    if (targets.length !== this.nOutputNodes)
+      throw TypeError(`Targets should have the same number of output nodes configured (that is ${this.nOutputNodes})...`);
+    if (targets instanceof Array) targets = Matrix.fromArray(targets);
+    const output = Matrix.fromArray(this.feedforward(inputs));
+    const error = Matrix.subtract(targets, output);
+  }
 }

@@ -170,6 +170,23 @@ class Matrix {
   }
 
   /**
+   * Subtracts matrix b from a
+   * @param {Matrix} a
+   * @param {Matrix} b
+   * @return {Matrix} Result matrix
+   */
+  static subtract (a, b) {
+    if (!(a instanceof Matrix && b instanceof Matrix)) {
+      throw new TypeError(
+        `a and b should both be Matrix objects, but got a ${typeof a} and a ${typeof b}...`);
+    }
+    if (!a.matchDimensions(b)) {
+      throw new TypeError(`Both matrices have to have the same dimensions...`);
+    }
+    return a.add(b.map(v => -v));
+  }
+
+  /**
    * Transposes the current matrix
    * @param {Matrix} matrix
    * @return {Matrix} Transposed matrix
