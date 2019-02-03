@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  margin-left: 45px;
+  padding: 10px;
+  overflow: hidden;
+}
+canvas {
+  margin: auto;
+}
+h1 {
+  font-size: 15pt;
+  text-align: center;
+}
+#control-panel {
+  background-color: #eee;
+  box-shadow: #999 1px 1px 1px;
+  width: 400px; 
+  padding: 15px;
+  margin-bottom: 20px;
+}
+.learning-rate, .reset-btn {
+  padding: 10px;
+}
+#slider {
+  appearance: none;
+  background-color: #999;
+}

@@ -25,7 +25,7 @@ class NeuralNetwork {
    * @param {Array<Number>|Matrix} inputs
    * @return {Array<Number>} Guess
    */
-  feedforward (inputs) {
+  predict (inputs) {
     if (inputs instanceof Array) inputs = Matrix.fromArray(inputs);
     else if(!(inputs instanceof Matrix))
       throw new TypeError(`Expected a array or a Matrix, but got a ${typeof inputs}`);
