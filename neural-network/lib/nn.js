@@ -1,10 +1,11 @@
 'use strict';
 
 class NeuralNetwork {
-  constructor (nInputNodes, nHiddenNodes, nOutputNodes) {
+  constructor (nInputNodes, nHiddenNodes, nOutputNodes, learningRate = 0.1) {
     this.nInputNodes = nInputNodes;
     this.nHiddenNodes = nHiddenNodes;
     this.nOutputNodes = nOutputNodes;
+    this.learningRate = learningRate;
 
     this.weightsIH = new Matrix(this.nHiddenNodes, this.nInputNodes).randomize();
     this.weightsHO = new Matrix(this.nOutputNodes, this.nHiddenNodes).randomize();
@@ -54,7 +55,37 @@ class NeuralNetwork {
     if (targets.length !== this.nOutputNodes)
       throw TypeError(`Targets should have the same number of output nodes configured (that is ${this.nOutputNodes})...`);
     if (targets instanceof Array) targets = Matrix.fromArray(targets);
-    const output = Matrix.fromArray(this.feedforward(inputs));
-    const error = Matrix.subtract(targets, output);
+    if (inputs instanceof Array) inputs = Matrix.fromArray(inputs);
+    
+    const hidden = Matrix
+      .mult(this.weightsIH, inputs)
+      .add(this.hiddenBias)
+      .map(this.activation);
+
+    const output = Matrix
+      .mult(this.weightsHO, hidden)
+      .add(this.outputBias)
+      .map(this.activation);
+    
+    const outputErrors = Matrix.subtract(targets, output);
+    const hiddenErrors = Matrix.mult(Matrix.transpose(this.weightsHO), outputErrors);
+
+    const gradientO = outputErrors
+      .mult(this.learningRate)
+      .mult(output.map(v => v*(1-v)));
+    const deltaWHO = Matrix
+      .mult(gradientO, Matrix.transpose(hidden));
+
+    this.weightsHO.add(deltaWHO);
+    this.outputBias.add(gradientO);
+
+    const gradientH = hiddenErrors
+      .mult(this.learningRate)
+      .mult(hidden.map(v => v*(1-v)));
+    const deltaWIH = Matrix
+      .mult(gradientH, Matrix.transpose(inputs));
+
+    this.weightsIH.add(deltaWIH);
+    this.hiddenBias.add(gradientH);
   }
 }

@@ -44,22 +44,31 @@ class Matrix {
     }
 
     if (typeof n === 'number') {
-      return this.map(v => v += n);
+      return this.map(v => v + n);
     }
 
-    return this.map((v, i, j) => v += n.values[i][j]);
+    return this.map((v, i, j) => v + n.values[i][j]);
   }
 
   /**
-   * Multiplies a scalar value to this matrix
-   * @param {Number} n Number to be multiplied by the whole matrix
+   * Multiplies a scalar value to this matrix if it's given a number.
+   * Otherwise, it makes a hadamard product with both matrices.
+   * @param {Number|Matrix} n Number to be multiplied by the whole matrix
    * @return {Matrix} This matrix object
    */
   mult (n) {
-    if (!(typeof n === 'number')) {
+    if (n instanceof Matrix) {
+      if (this.rows !== n.rows || this.cols !== n.cols) {
+        throw new TypeError('Columns and rows of both matrices must match.');
+      }
+
+      // hadamard product
+      return this.map((v, i, j) => v * n.values[i][j]);
+    } else if (!(typeof n === 'number')) {
       throw new TypeError(
         `n should be a number, but got a ${typeof n}...`);
     }
+    // scalar product
     return this.map(v => v * n);
   }
 
@@ -102,10 +111,21 @@ class Matrix {
   }
 
   /**
+   * Makes a copy of the current matrix
+   * @return {Matrix}
+   */
+  copy () {
+    const m = new Matrix(this.nRows, this.nCols);
+    return m.map((_, i, j) => this.values[i][j]);
+  }
+
+  /**
    * Console-table the matrix values
    */
   print () {
     console.table(this.values);
+
+    return this;
   }
 
   /**
@@ -183,6 +203,8 @@ class Matrix {
     if (!a.matchDimensions(b)) {
       throw new TypeError(`Both matrices have to have the same dimensions...`);
     }
+    a = a.copy();
+    b = b.copy();
     return a.add(b.map(v => -v));
   }
 
