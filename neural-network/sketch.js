@@ -1,6 +1,8 @@
 'use strict';
 let n;
-let slider;
+let lrSlider;
+let hnSlider;
+let rSlider;
 let reset;
 
 const trainingData = [
@@ -25,14 +27,19 @@ const trainingData = [
 function setup() {
 	createCanvas(400, 400);
 
-	slider = select('#slider');
-	n = new NeuralNetwork(2, 3, 1, slider.value());
+	lrSlider = select('#learning-rate-slider');
+	hnSlider = select('#hidden-nodes-slider');
+	rSlider = select('#resolution-slider');
+	n = new NeuralNetwork(2, hnSlider.value(), 1, lrSlider.value());
 	
-	slider.mouseMoved(() => {
-		select('#slider-value').html(` ${slider.value()}`);
+	lrSlider.mouseMoved(() => {
+		select('#learning-rate-value').html(` ${lrSlider.value()}`);
+	});
+	hnSlider.mouseMoved(() => {
+		select('#hidden-nodes-value').html(` ${hnSlider.value()}`);
 	});
 	reset = select('#reset');
-	reset.mousePressed(() => n = new NeuralNetwork(2,3,1, slider.value()));
+	reset.mousePressed(() => n = new NeuralNetwork(2, hnSlider.value(), 1, lrSlider.value()));
 }	
 
 function draw() {
@@ -42,8 +49,7 @@ function draw() {
 		let data = random(trainingData);
 		n.train(data.inputs, data.targets);
 	}
-	
-	const resolution = 5;
+	const resolution = rSlider.value();
 	const nCols = width / resolution;
 	const nRows = height / resolution;
 

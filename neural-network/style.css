@@ -18,7 +18,7 @@ h1 {
   padding: 15px;
   margin-bottom: 20px;
 }
-.learning-rate, .reset-btn {
+.controller {
   padding: 10px;
 }
 #slider {
