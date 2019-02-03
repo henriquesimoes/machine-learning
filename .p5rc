@@ -5,6 +5,7 @@
     "linear-regression",
     "linear-regression-gradient-descent",
     "perceptron",
-    "neural-network"
+    "neural-network",
+    "doodle-classifier"
   ]
 }
