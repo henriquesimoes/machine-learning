@@ -80,7 +80,6 @@ class DoodleClassifier {
     for (let i=0; i < this.testing.length; i++) {
       this.testNext(i);
     }
-    console.log(this.correctAnswers / this.testing.length);
   }
 
   testNext(i) {
@@ -89,6 +88,16 @@ class DoodleClassifier {
     let classification = guess.indexOf(max(guess));
     if (classification === this.testing[i].label) this.correctAnswers++;
     this.testingCounter++;
+  }
+
+  classify (imgPixels) {
+    let guess = this.nn.predict(imgPixels);
+    let classification = guess.indexOf(max(guess));
+    switch (classification) {
+      case this.cats.code: return this.cats.label; 
+      case this.rainbows.code: return this.rainbows.label; 
+      case this.trains.code: return this.trains.label; 
+    }
   }
 
   get trainingLength () {
@@ -100,14 +109,14 @@ class DoodleClassifier {
   }
 
   get trainingProgress () {
-    return Math.round(this.trainingCounter / this.training.length * 100);
+    return this.trainingCounter / this.training.length * 100;
   }
 
   get testingProgress () {
-    return Math.round(this.testingCounter / this.testing.length * 100);
+    return this.testingCounter / this.testing.length * 100;
   }
 
   get accuracy () {
-    return Math.round(this.correctAnswers / this.testingCounter * 100);
+    return this.correctAnswers / this.testingCounter * 100 || 0;
   }
 }
