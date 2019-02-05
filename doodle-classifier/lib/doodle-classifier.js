@@ -1,29 +1,7 @@
 'use strict';
 class DoodleClassifier {
-  constructor (total = 1000) {
-    this.cats = {
-      code: 0,
-      label: "cat",
-      source: `cats${total}.bin`,
-      training: [],
-      testing: []
-    };
-    this.trains = {
-      code: 1,
-      label: "train",
-      source: `trains${total}.bin`,
-      training: [],
-      testing: []
-    };
-    this.rainbows = {
-      code: 2,
-      label: "rainbow",
-      source: `rainbows${total}.bin`,
-      training: [],
-      testing: []
-    };
-
-    this.cats.length = this.trains.length = this.rainbows.length = total;
+  constructor () {
+    this.categories = [];
     this.trainingPercentage = 0.8; // 80% of the data for training and 20% for testing
     this.length = 784; // Bytes length for a single image (28x28)
     this.training = [];
@@ -31,31 +9,45 @@ class DoodleClassifier {
     this.trainingCounter = 0;
     this.testingCounter = 0;
     this.correctAnswers = 0;
-    this.x = 0;
-    
-    this.nn = new NeuralNetwork(784, 64, 3);  
   }
 
-  loadData () {    
-    this.cats.data = loadBytes(`data/${this.cats.source}`);
-    this.trains.data = loadBytes(`data/${this.trains.source}`);
-    this.rainbows.data = loadBytes(`data/${this.rainbows.source}`);
+  loadData () {
+    loadJSON('data/categories.json', (json) => {
+      this.categories = Object.values(json);
+      this.categories.forEach((category, i) => {
+        this.categories[i].data = loadBytes(`data/${category.source}`);
+      });
+      this.nn = new NeuralNetwork(784, 64, this.categories.length, 0.2);  
+    });
   }
 
   prepareData () {
-    [this.cats, this.trains, this.rainbows].forEach((category) => this.prepareCategory(category));
-    this.training = [].concat(this.cats.training, this.trains.training, this.rainbows.training);
+    let training = [];
+    let testing = [];
+    for (let i=0; i < this.categories.length; i++) {
+      this.prepareCategory(i);
+      training.push(this.categories[i].training);
+      testing.push(this.categories[i].testing);      
+    }
+    
+    this.training = [].concat.apply([], training);
     shuffle(this.training, true);
-    this.testing = [].concat(this.cats.testing, this.trains.testing, this.rainbows.testing);
+    this.testing = [].concat.apply([], testing);
   }
 
-  prepareCategory (category) {    
-    for (let i=0; i< category.length; i++) {
+  prepareCategory (j) {    
+    for (let i=0; i < this.categories[j].length; i++) {
       let offset = this.length * i;
-      if (i < Math.floor(category.length * this.trainingPercentage)) {
-        category.training.push({label: category.code, data: category.data.bytes.subarray(offset, offset + this.length)});
+      if (i < Math.floor(this.categories[j].length * this.trainingPercentage)) {
+        this.categories[j].training.push({
+          label: this.categories[j].code,
+          data: this.categories[j].data.bytes.subarray(offset, offset + this.length)
+        });
       } else {
-        category.testing.push({label: category.code, data: category.data.bytes.subarray(offset, offset + this.length)});
+        this.categories[j].testing.push({
+          label: this.categories[j].code,
+          data: this.categories[j].data.bytes.subarray(offset, offset + this.length)
+        });
       }
     }
   }
@@ -93,11 +85,8 @@ class DoodleClassifier {
   classify (imgPixels) {
     let guess = this.nn.predict(imgPixels);
     let classification = guess.indexOf(max(guess));
-    switch (classification) {
-      case this.cats.code: return this.cats.label; 
-      case this.rainbows.code: return this.rainbows.label; 
-      case this.trains.code: return this.trains.label; 
-    }
+    const category = this.categories.filter((c) => c.code === classification);
+    return category.shift().label;
   }
 
   get trainingLength () {

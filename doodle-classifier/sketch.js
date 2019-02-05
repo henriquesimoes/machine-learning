@@ -5,18 +5,19 @@ let trainingProgress = 0;
 let testingProgress = 0;
 let nEpoch = 1;
 let guess;
+let categories;
 
 function preload() {
 	ddc = new DoodleClassifier();
-	ddc.loadData();
+	ddc.loadData();	
 }
 
 function setup() {
 	select('#canvas-panel').child(createCanvas(280, 280));
 	background(0);
-	frameRate(100);	
+	frameRate(100);
 	textSize(16);
-	textAlign(CENTER, CENTER)
+	textAlign(CENTER, CENTER);
 	fill(255);
 	
 	ddc.prepareData();
@@ -25,6 +26,11 @@ function setup() {
 	guessButton = select('#guess');
 	resetButton = select('#reset');
 	guess = select('#guess-panel')
+	categories = select('#categories');
+
+	ddc.categories.forEach((cat) => {
+		categories.option(cat.label);
+	});
 
 	trainButton.mouseClicked(() => {
 		alert('Starting training... this might take a while to finish.');
