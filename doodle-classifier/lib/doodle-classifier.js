@@ -1,9 +1,12 @@
 'use strict';
 class DoodleClassifier {
   constructor () {
-    this.categories = [];
     this.trainingPercentage = 0.8; // 80% of the data for training and 20% for testing
     this.length = 784; // Bytes length for a single image (28x28)
+    this.allCategories;
+    this.nnINodes = this.length;
+    this.nnHNodes = 64;
+    this.categories = [];
     this.training = [];
     this.testing = [];
     this.trainingCounter = 0;
@@ -13,11 +16,12 @@ class DoodleClassifier {
 
   loadData () {
     loadJSON('data/categories.json', (json) => {
-      this.categories = Object.values(json);
-      this.categories.forEach((category, i) => {
-        this.categories[i].data = loadBytes(`data/${category.source}`);
+      this.allCategories = Object.values(json);
+      this.allCategories.forEach((category, i) => {
+        this.allCategories[i].data = loadBytes(`data/${category.source}`);
       });
-      this.nn = new NeuralNetwork(784, 64, this.categories.length, 0.2);  
+      this.categories = this.allCategories.slice();
+      this.nn = new NeuralNetwork(this.nnINodes, this.nnHNodes, this.allCategories.length, 0.2);  
     });
   }
 
@@ -40,32 +44,44 @@ class DoodleClassifier {
       let offset = this.length * i;
       if (i < Math.floor(this.categories[j].length * this.trainingPercentage)) {
         this.categories[j].training.push({
-          label: this.categories[j].code,
+          code: this.categories[j].code,
+          label: j,
           data: this.categories[j].data.bytes.subarray(offset, offset + this.length)
         });
       } else {
         this.categories[j].testing.push({
-          label: this.categories[j].code,
+          code: this.categories[j].code,
+          label: j,
           data: this.categories[j].data.bytes.subarray(offset, offset + this.length)
         });
       }
     }
   }
 
-  trainEpoch () {
+  preTraining () {
     shuffle(this.training, true);
+    this.trainingCounter = 0;
+  }
+
+  trainEpoch () {
+    this.preTraining();
     for (let i = 0; i < this.training.length; i++) {
       this.trainNext(i);
     }
   }
 
-  trainNext(i) {
-    let raw = Array.from(this.training[i].data);
-    let inputs = raw.map(v => v / 255.0);
+  trainNext(i, displayImg) {
+    if (displayImg) displayImg(Array.from(this.training[i].data));
+    let inputs = this.normalizeImg(this.training[i].data);
     let targets = new Array(this.nn.nOutputNodes).fill(0);
     targets[this.training[i].label] = 1;
     this.nn.train(inputs, targets);
     this.trainingCounter++;
+  }
+
+  preTesting() {
+    this.testingCounter = 0;
+    this.correctAnswers = 0;
   }
 
   test () {
@@ -74,19 +90,51 @@ class DoodleClassifier {
     }
   }
 
-  testNext(i) {
+  testNext(i, displayImg) {
+    let correct = false;
+    let inputs = this.normalizeImg(this.testing[i].data);
     let guess = this.nn
-      .predict(Array.from(this.testing[i].data));
+      .predict(inputs);
     let classification = guess.indexOf(max(guess));
-    if (classification === this.testing[i].label) this.correctAnswers++;
+    if (classification === this.testing[i].label) {
+      this.correctAnswers++;
+      correct = true;
+    }
+    if (displayImg) displayImg(Array.from(this.testing[i].data), correct);
     this.testingCounter++;
+  }
+
+  normalizeImg(rawImg) {
+    let raw = Array.from(rawImg);
+    return raw.map(v => v / 255.0);
   }
 
   classify (imgPixels) {
     let guess = this.nn.predict(imgPixels);
     let classification = guess.indexOf(max(guess));
-    const category = this.categories.filter((c) => c.code === classification);
+    const category = this.categories.filter((_, i) => i === classification);
     return category.shift().label;
+  }
+
+  changeCategories (arr) {
+    this.categories = this.allCategories.filter(c => arr.indexOf(c.code) > -1);
+    this.updateData();
+    this.nn = new NeuralNetwork(this.nnINodes, this.nnHNodes, this.categories.length);
+  }
+  
+  updateData () {
+    let training = [];
+    let testing = [];
+    for (let i=0; i < this.categories.length; i++) {
+      this.categories[i].training.forEach(t => t.label = i);
+      this.categories[i].testing.forEach(t => t.label = i);
+      training.push(this.categories[i].training);
+      testing.push(this.categories[i].testing);
+    }
+    
+    this.training = [].concat.apply([], training);
+    shuffle(this.training, true);
+    this.testing = [].concat.apply([], testing);
   }
 
   get trainingLength () {

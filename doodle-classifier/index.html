@@ -18,31 +18,44 @@
 
 	<style>
 		body {
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			user-select: none;
       margin:0;
 			margin-left:45px;
-			padding:0;
+			padding:20px;
 			overflow: hidden;
 		}
 		canvas {
 			margin:auto;
 		}
 		button {
+			margin: 0 10px 10px 10px;
+		}
+		.container {
+			float: left;
 			margin: 10px;
+		}
+		#categories {
+			margin: 10px 0;
 		}
 	</style>
 </head>
 <body>
-	<div>
-		Available categories: 
-		<select id="categories"></select>
+	<div class="container">
+		<div>
+			<button id="train">Train</button>
+			<button id="test">Test</button>
+			<button id="reset">Reset</button>
+			<button id="guess">Guess</button>
+		</div>
+		<div id="canvas-panel"></div>
+		<div class="container" id="guess-panel"></div>
 	</div>
-	<div>
-		<button id="train">Train</button>
-		<button id="test">Test</button>
-		<button id="reset">Reset</button>
-		<button id="guess">Guess</button>
+	<div class="container">
+		Used categories: 
+		<div id="categories"></div>
+		<button id="cat-btn">Change categories</button>
 	</div>
-	<div id="canvas-panel"></div>
-	<div id="guess-panel"><div>
 </body>
 </html>
