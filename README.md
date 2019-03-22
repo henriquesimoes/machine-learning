@@ -1,5 +1,7 @@
 # Machine Learning basics
 
+This repository contains examples with basic machine learning structures and it's been built for learning purposes.
+
 ## Where it was inspired from
 
 The examples available in this repository were produced following the [Daniel Shiffman YouTube videos][10].
@@ -24,6 +26,16 @@ Finally, you'll need to start the p5 server by executing
 
 The server is now running, and you're able to see the examples in the address provided by the previous command (which is, by default, http://localhost:5555).
 
+## Available Examples
+
+- [Linear Regression][20]
+- [Linear Regression with Gradient Descent][21]
+- [Perceptron][22]
+- [Neural Network library][23]
+- [Movie Recommendation][24]
+- [Doodle Classifier][25]
+
+
 ## Contribuitions
 
 If you find any mistakes or want to improve the code, you can create a pull request and it may be integrated to the repository.
@@ -31,3 +43,9 @@ If you find any mistakes or want to improve the code, you can create a pull requ
 [1]: https://www.npmjs.com
 [2]: https://www.npmjs.com/package/p5-manager
 [10]: https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw
+[20]: ./linear-regression/README.md
+[21]: ./linear-regression-gradient-descent/README.md
+[22]: ./perceptron/README.md
+[23]: ./neural-network/README.md
+[24]: ./movie-recommendation/README.md
+[25]: ./doodle-classifier/README.md
