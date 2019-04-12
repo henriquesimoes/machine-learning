@@ -2,4 +2,4 @@
 
 This is an example for a single neuron implementation, the called perceptron.
 
-[Go Back](../)
+[Go Back](../README.md)

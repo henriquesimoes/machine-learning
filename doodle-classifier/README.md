@@ -14,7 +14,7 @@ When you want to, you might draw something in the canvas and click on the guess 
 
 If you find any bug or have any suggestion, create an issue or a pull request.
 
-[Go Back](../)
+[Go Back](../README.md)
 
 [1]: https://quickdraw.withgoogle.com/data
 [2]: ../
