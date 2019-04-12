@@ -43,9 +43,9 @@ If you find any mistakes or want to improve the code, you can create a pull requ
 [1]: https://www.npmjs.com
 [2]: https://www.npmjs.com/package/p5-manager
 [10]: https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw
-[20]: ./linear-regression/README.md
-[21]: ./linear-regression-gradient-descent/README.md
-[22]: ./perceptron/README.md
-[23]: ./neural-network/README.md
-[24]: ./movie-recommendation/README.md
-[25]: ./doodle-classifier/README.md
+[20]: ./linear-regression/
+[21]: ./linear-regression-gradient-descent/
+[22]: ./perceptron/
+[23]: ./neural-network/
+[24]: ./movie-recommendation/
+[25]: ./doodle-classifier/

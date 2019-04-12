@@ -7,4 +7,4 @@ This examplee uses the gradient descent technique for finding the linear regress
 - Click on the canvas to add a new point
 - See the machine finding the best linear regression it can.
 
-[Go Back](../README.md)
+[Go Back](../)
