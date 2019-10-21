@@ -10,6 +10,19 @@ Next, with the example runnning, you'll see that a list of categories are exhibi
 
 When you want to, you might draw something in the canvas and click on the guess button to have the machine predict what you just drew. 
 
+## Directory and files organization
+
+The files are organized as follows.
+
+- [index.html](./index.html) - HTML file that includes the p5 library and other files into the page and creates some visual controllers for configuration.
+- [sketch.js](./sketch.js) - Entry point for executing the example. This is were the [DoodleClassifier](./lib/doodle-classifier.js) is instanciated.
+- [lib/](./lib) - Libraries that were built for abstracting processes.
+    * [matrix.js](./lib/matrix.js) - Implementation for matrix basic operation for making it easier to doing back-propagation and feed-forward operations
+    * [nn.js](./lib/nn.js) - My fully connected neural network implementation.
+    * [doodle-classifier.js](./lib/doodle-classifier.js) - Class for handling the neural network manipulation for classifying the given doodle, and for training and testing it.
+- [data/](./data) - Categories raw data used for training and testing.
+- [loadbinary.js](./loadbinary.js) - Library used for adding a easier way to load binary files
+
 ## Contribuition
 
 If you find any bug or have any suggestion, create an issue or a pull request.
